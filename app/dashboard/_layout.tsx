@@ -1,10 +1,12 @@
+import React from "react";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { Ionicons } from "@expo/vector-icons";
-import {StyleSheet, TouchableOpacity} from "react-native";
-import { BlurView } from "expo-blur";
-import {router} from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function DashBoardLayout() {
+    const router = useRouter();
+
     return (
         <Drawer
             initialRouteName="main_page"
@@ -17,11 +19,15 @@ export default function DashBoardLayout() {
                 drawerActiveTintColor: "#ff0099", // Pink active tint
                 drawerInactiveTintColor: "#555",
                 drawerItemStyle: styles.drawerItem,
-                headerTitle: () => (
-                    <Text style={styles.headerTitle}>AURUM KNITTING</Text>
-                ),
+
+                // ✅ FIX: Use a function that returns JSX
+                headerTitle: () => <Text style={styles.headerTitle}>AURUM KNITTING</Text>,
+
                 headerRight: () => (
-                    <TouchableOpacity onPress={() => router.push("/profile")} style={styles.profileIcon}>
+                    <TouchableOpacity
+                        onPress={() => router.push("/profile")}
+                        style={styles.profileIcon}
+                    >
                         <Ionicons name="person-circle-outline" size={30} color="#fff" />
                     </TouchableOpacity>
                 ),
@@ -30,10 +36,10 @@ export default function DashBoardLayout() {
             <Drawer.Screen
                 name="main_page"
                 options={{
-                    title: "Main page",
-                    // headerShown: false,
+                    title: "Main Page",
+                    headerShown: true,
                     drawerIcon: ({ color, size }) => (
-                        <Ionicons name="person-circle-outline" color={color} size={size} />
+                        <Ionicons name="home-outline" color={color} size={size} />
                     ),
                 }}
             />
@@ -41,9 +47,9 @@ export default function DashBoardLayout() {
                 name="customer"
                 options={{
                     title: "Customers",
-                    headerShown: false,
+                    headerShown: true,
                     drawerIcon: ({ color, size }) => (
-                        <Ionicons name="person-circle-outline" color={color} size={size} />
+                        <Ionicons name="people-outline" color={color} size={size} />
                     ),
                 }}
             />
@@ -51,7 +57,7 @@ export default function DashBoardLayout() {
                 name="item"
                 options={{
                     title: "Items",
-                    headerShown: false,
+                    headerShown: true,
                     drawerIcon: ({ color, size }) => (
                         <Ionicons name="cube-outline" color={color} size={size} />
                     ),
@@ -61,7 +67,7 @@ export default function DashBoardLayout() {
                 name="placeorder"
                 options={{
                     title: "Place Order",
-                    headerShown: false,
+                    headerShown: true,
                     drawerIcon: ({ color, size }) => (
                         <Ionicons name="cart-outline" color={color} size={size} />
                     ),
@@ -74,13 +80,13 @@ export default function DashBoardLayout() {
 const styles = StyleSheet.create({
     drawerStyle: {
         width: 300,
-        backgroundColor: "#fff", // White background for the drawer
+        backgroundColor: "#fff",
         borderTopRightRadius: 20,
         borderBottomRightRadius: 20,
         overflow: "hidden",
     },
     headerStyle: {
-        backgroundColor: "#ff0099", // Pink header
+        backgroundColor: "#ff0099",
     },
     headerTitle: {
         fontSize: 20,
@@ -94,10 +100,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     profileIcon: {
-        marginRight: 15, // Adjust spacing from the right
+        marginRight: 15,
     },
 });
-
-export function BlurredDrawerBackground() {
-    return <BlurView intensity={50} style={StyleSheet.absoluteFill} />;
-}
