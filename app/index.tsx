@@ -1,4 +1,4 @@
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Animated} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Animated } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
@@ -11,7 +11,7 @@ export default function Index() {
 
     // Animations
     const fadeAnim = useRef(new Animated.Value(0)).current;
-    const slideAnim = useRef(new Animated.Value(50)).current;
+    const slideAnim = useRef(new Animated.Value(50)).current; // Corrected
 
     useEffect(() => {
         Animated.parallel([
@@ -45,20 +45,27 @@ export default function Index() {
             {/* Overlay to reduce opacity */}
             <View style={styles.overlay} />
 
-
-
             <View style={styles.container}>
                 <BlurView intensity={30} tint="light" style={styles.card}>
-                    <Text style={[styles.brandTitle, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+                    <Animated.Text
+                        style={[
+                            styles.brandTitle,
+                            {
+                                opacity: fadeAnim,
+                                transform: [{ translateY: slideAnim }] // ✅ Fixed translateY
+                            }
+                        ]}
+                    >
                         Aurum Knitting
-                    </Text>
+                    </Animated.Text>
+
                     <Text style={styles.title}>Welcome Back!</Text>
 
                     {/* Username Input */}
                     <TextInput
                         style={styles.input}
                         placeholder="Username"
-                        placeholderTextColor="rgba(255,0,153,0.4)" // New color
+                        placeholderTextColor="rgba(255,0,153,0.4)"
                         value={username}
                         onChangeText={setUsername}
                     />
@@ -67,19 +74,19 @@ export default function Index() {
                     <TextInput
                         style={styles.input}
                         placeholder="Password"
-                        placeholderTextColor="rgba(255,0,153,0.4)" // New color
+                        placeholderTextColor="rgba(255,0,153,0.4)"
                         secureTextEntry
                         value={password}
                         onChangeText={setPassword}
                     />
 
-                    {/* Index Button */}
+                    {/* Login Button */}
                     <TouchableOpacity style={styles.button} onPress={handleLogin}>
                         <Text style={styles.buttonText}>Login</Text>
                     </TouchableOpacity>
                 </BlurView>
 
-                {/* Social Media Index */}
+                {/* Social Media Login */}
                 <Text style={styles.orText}>Or continue with</Text>
                 <View style={styles.socialContainer}>
                     <TouchableOpacity style={styles.socialButton}>
@@ -105,7 +112,6 @@ export default function Index() {
                 </Text>
             </View>
         </ImageBackground>
-
     );
 }
 
@@ -116,32 +122,29 @@ const styles = StyleSheet.create({
         height: "100%",
         justifyContent: "center",
         alignItems: "center",
-
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(255,0,153,0.1)", // Adjust the opacity here (0.4 = 40% opacity)
+        backgroundColor: "rgba(255,0,153,0.1)", // Adjust the opacity here (0.1 = 10% opacity)
     },
     brandTitle: {
         fontSize: 30,
         fontWeight: "bold",
         color: "#ff0099",
         textAlign: "center",
-        marginTop: 10, // Reduce this to move it up
-        marginBottom: 20, // Reduce this to bring it closer to the card
+        marginBottom: 20,
         letterSpacing: 1.5,
     },
     container: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        padding: 0,
     },
     card: {
-        width: "85%", // Keeps a good proportion
-        minHeight: 300, // Ensures enough height for content
-        paddingVertical: 40, // Balanced padding
-        paddingHorizontal: 30, // Keeps it spacious
+        width: "85%",
+        minHeight: 300,
+        paddingVertical: 40,
+        paddingHorizontal: 30,
         borderRadius: 20,
         alignItems: "center",
         borderWidth: 1,
@@ -153,7 +156,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "500",
         color: "#ff0099",
-        paddingTop: -30,
         marginBottom: 35,
         letterSpacing: 1,
     },
@@ -163,20 +165,17 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "rgba(255, 255, 255, 0.4)",
         borderRadius: 25,
-        paddingHorizontal: 100, // Adjusted for better spacing
+        paddingHorizontal: 20, // ✅ Fixed padding for text visibility
         backgroundColor: "rgba(255,0,153,0.3)",
         marginBottom: 15,
         fontSize: 16,
         color: "rgb(255,0,153)",
-        // iOS shadow properties for a 3D look
         shadowColor: "rgba(250,0,217,0.24)",
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.44,
         shadowRadius: 10.32,
-        // Android shadow (elevation)
-        elevation: 20,
+        elevation: 10,
     },
-
     button: {
         width: "100%",
         height: 50,
@@ -185,7 +184,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 25,
         marginTop: 10,
-        paddingHorizontal: 50, // Added padding
+        paddingHorizontal: 50,
         shadowColor: "#ff0099",
         shadowOffset: { width: 0, height: 5 },
         shadowOpacity: 0.3,
@@ -195,7 +194,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 18,
         fontWeight: "bold",
-        textAlign: "center", // Ensure center alignment
+        textAlign: "center",
     },
     orText: {
         fontSize: 14,
