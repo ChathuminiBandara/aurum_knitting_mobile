@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert } from "react-native";
 
-export default function ItemCRUD() {
+export default function Item() {
     // State for items list and input fields
     const [items, setItems] = useState([
         { id: "1", name: "Laptop", price: "1200" },
