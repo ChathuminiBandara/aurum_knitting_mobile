@@ -1,57 +1,52 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 
-export default function MainPage() {
+export default function main_page() {
     const router = useRouter();
 
     return (
         <ScrollView style={styles.container}>
-            {/* Top Bar with Menu Button & User Icon */}
-            <View style={styles.topBar}>
 
-
-                <Text style={styles.top_aurum}>AURUM KNITTING</Text>
-
-                {/* User Profile Icon - Right Side */}
-                <TouchableOpacity onPress={() => router.push("/profile")}>
-                    <Ionicons name="person-circle-outline" size={30} color="#ff0099" />
-                </TouchableOpacity>
+            {/* Product Image */}
+            <View style={styles.imageContainer}>
+                <Image
+                    source={require("../../assets/login_background/img_2.jpg")} // Update with your image path
+                    style={styles.productImage}
+                />
             </View>
 
-            {/* Welcome Banner */}
-            <LinearGradient colors={["#ff9a9e", "#fecfef"]} style={styles.banner}>
-                <Text style={styles.welcomeText}>🌸 Welcome Back, Jane! 🌸</Text>
-                <Text style={styles.subtitle}>Let’s craft some floral magic today! ✨</Text>
-            </LinearGradient>
+            {/* Product Details */}
+            <View style={styles.detailsContainer}>
+                <Text style={styles.productTitle}>
+                    Bouquet of Light Peach Bush Roses Pavlova
+                </Text>
+                <Text style={styles.productTitleEng}>
+                    Puff tulip
+                </Text>
 
-            {/* Knitted Flower Showcase */}
-            <View style={styles.showcase}>
-                <Image source={require("../../assets/login_background/img_2.jpg")} style={styles.showcaseImage} />
-            </View>
+                <View style={styles.priceRow}>
+                    <Text style={styles.oldPrice}>4890 ₽</Text>
+                    <Text style={styles.newPrice}>4290 ₽</Text>
+                    <Text style={styles.cashback}>Cashback 10%</Text>
+                </View>
 
-            {/* Quick Actions */}
-            <View style={styles.quickActions}>
-                <TouchableOpacity style={styles.actionItem} onPress={() => router.push("/orders")}>
-                    <Ionicons name="cart-outline" size={30} color="#ff4081" />
-                    <Text style={styles.actionText}>Orders</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionItem} onPress={() => router.push("/flowers")}>
-                    <Ionicons name="rose-outline" size={30} color="#ff4081" />
-                    <Text style={styles.actionText}>Flowers</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionItem} onPress={() => router.push("/customers")}>
-                    <Ionicons name="people-outline" size={30} color="#ff4081" />
-                    <Text style={styles.actionText}>Customers</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={styles.ratingRow}>
+                    <Ionicons name="star" size={20} color="#FFD700" />
+                    <Text style={styles.rating}>4.5</Text>
+                </View>
 
-            {/* Promotions & Offers */}
-            <View style={styles.promoCard}>
-                <Text style={styles.promoText}>New Collection Alert! 20% Off on Handmade</Text>
-                <Text style={styles.promoTextFlowers}>🌷 Roses! 🌷</Text>
+                <TouchableOpacity style={styles.buyButton}>
+                    <Text style={styles.buyButtonText}>Buy</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
@@ -62,83 +57,80 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
     },
-    topBar: {
-        flexDirection: "row", // Align items in a row
-        justifyContent: "space-between", // Push left and right items apart
-        alignItems: "center",
-        paddingHorizontal: 15,
-        paddingVertical: 15,
-        marginTop: 10,
-    },
-    top_aurum: {
-        color: "#ff0099", // Pink color for the heading
-        fontSize: 28, // Large size for prominence
-        fontWeight: "bold", // Bold font to give it a strong appearance
-        textTransform: "uppercase", // Capitalize all letters for modern effect
-        letterSpacing: 1.5, // Slight spacing between letters for a refined look
-        textShadowColor: "rgba(255,0,153,0.31)", // Light pink shadow for some depth
-        textShadowOffset: { width: 2, height: 2 }, // Shadow offset for a subtle 3D effect
-        textShadowRadius: 5, // Soft shadow radius
-        marginVertical: 20, // Vertical margin to space it from other content
-        textAlign: "center", // Center-align the text for a balanced look
-    },
-    banner: {
-        padding: 20,
-        borderRadius: 15,
-        margin: 15,
-        alignItems: "center",
-    },
-    welcomeText: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "#fff",
-    },
-    subtitle: {
-        fontSize: 14,
-        color: "#fff",
-        marginTop: 5,
-    },
-    showcase: {
+    imageContainer: {
         alignItems: "center",
         marginVertical: 20,
     },
-    showcaseImage: {
+    productImage: {
         width: 250,
         height: 250,
         resizeMode: "contain",
-    },
-    quickActions: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginVertical: 20,
-    },
-    actionItem: {
-        alignItems: "center",
-        padding: 10,
-        backgroundColor: "#fce4ec",
         borderRadius: 10,
     },
-    actionText: {
+    detailsContainer: {
+        paddingHorizontal: 20,
+    },
+    productTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#333",
+        textAlign: "center",
+    },
+    productTitleEng: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#666",
+        textAlign: "center",
         marginTop: 5,
+    },
+    priceRow: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginVertical: 10,
+    },
+    oldPrice: {
+        textDecorationLine: "line-through",
+        color: "#888",
+        marginRight: 10,
+        fontSize: 16,
+    },
+    newPrice: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#d32f2f",
+    },
+    cashback: {
+        marginLeft: 10,
+        color: "#388e3c",
         fontSize: 14,
-        color: "#ff0099",
     },
-    promoCard: {
-        backgroundColor: "#ff80ab",
-        padding: 15,
-        margin: 20,
-        borderRadius: 10,
+    ratingRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginVertical: 5,
     },
-    promoText: {
-        color: "#fff",
-        textAlign: "center",
+    rating: {
+        marginLeft: 5,
+        fontSize: 16,
         fontWeight: "bold",
     },
-    promoTextFlowers: {
+    buyButton: {
+        backgroundColor: "#ff4081",
+        paddingVertical: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 15,
+    },
+    buyButtonText: {
         color: "#fff",
-        textAlign: "center",
+        fontSize: 16,
         fontWeight: "bold",
-        fontSize: 20, // Larger font size for emphasis
-        marginTop: 5, // Adds spacing from the first line
+    },
+    buyButtonTextEng: {
+        color: "#fff",
+        fontSize: 14,
+        marginTop: 2,
     },
 });
