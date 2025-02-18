@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert } from "react-native";
 
-export default function CustomerCRUD() {
+export default function Customer() {
     // State for customers list and input fields
     const [customers, setCustomers] = useState([
         { id: "1", name: "John Doe", email: "john@example.com" },
