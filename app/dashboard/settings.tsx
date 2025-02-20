@@ -55,8 +55,8 @@ export default function Settings() {
                 text: "Logout",
                 style: "destructive",
                 onPress: () => {
-                    AsyncStorage.clear(); // Clear saved data
-                    router.push("/"); // Redirect to login
+                    AsyncStorage.clear();
+                    router.push("/");
                 },
             },
         ]);
@@ -64,172 +64,195 @@ export default function Settings() {
 
     return (
         <View style={[styles.container, darkMode && styles.darkContainer]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                <Text style={[styles.title, darkMode && styles.darkTitle]}>Settings</Text>
 
-                {/* Title */}
-                <Text style={styles.title}>Settings</Text>
-
-                {/* Profile Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Profile</Text>
-                    <TextInput
-                        style={[styles.input, darkMode && styles.darkInput]}
-                        value={name}
-                        onChangeText={setName}
-                        placeholder="Full Name"
-                        placeholderTextColor={darkMode ? "#bbb" : "#666"}
-                    />
-                    <TextInput
-                        style={[styles.input, darkMode && styles.darkInput]}
-                        value={email}
-                        onChangeText={setEmail}
-                        placeholder="Email Address"
-                        placeholderTextColor={darkMode ? "#bbb" : "#666"}
-                        keyboardType="email-address"
-                    />
+                {/* Profile Card */}
+                <View style={[styles.card, darkMode && styles.darkCard]}>
+                    <Text style={[styles.cardTitle, darkMode && styles.darkCardTitle]}>Profile</Text>
+                    <View style={styles.inputContainer}>
+                        <Ionicons name="person-outline" size={20} color={darkMode ? "#aaa" : "#888"} />
+                        <TextInput
+                            style={[styles.input, darkMode && styles.darkInput]}
+                            value={name}
+                            onChangeText={setName}
+                            placeholder="Full Name"
+                            placeholderTextColor={darkMode ? "#aaa" : "#888"}
+                        />
+                    </View>
+                    <View style={styles.inputContainer}>
+                        <Ionicons name="mail-outline" size={20} color={darkMode ? "#aaa" : "#888"} />
+                        <TextInput
+                            style={[styles.input, darkMode && styles.darkInput]}
+                            value={email}
+                            onChangeText={setEmail}
+                            placeholder="Email Address"
+                            placeholderTextColor={darkMode ? "#aaa" : "#888"}
+                            keyboardType="email-address"
+                        />
+                    </View>
                 </View>
 
-                {/* Preferences Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Preferences</Text>
-
-                    {/* Notifications */}
-                    <View style={styles.settingRow}>
-                        <View style={styles.settingInfo}>
-                            <Ionicons name="notifications-outline" size={22} color={darkMode ? "#fff" : "#ff0099"} />
-                            <Text style={[styles.settingText, darkMode && styles.darkText]}>
+                {/* Preferences Card */}
+                <View style={[styles.card, darkMode && styles.darkCard]}>
+                    <Text style={[styles.cardTitle, darkMode && styles.darkCardTitle]}>Preferences</Text>
+                    <View style={styles.preferenceRow}>
+                        <View style={styles.preferenceInfo}>
+                            <Ionicons name="notifications-outline" size={20} color={darkMode ? "#aaa" : "#ff0099"} />
+                            <Text style={[styles.preferenceText, darkMode && styles.darkPreferenceText]}>
                                 Enable Notifications
                             </Text>
                         </View>
-                        <Switch value={notificationsEnabled} onValueChange={setNotificationsEnabled} />
+                        <Switch
+                            trackColor={{ false: "#ccc", true: "#ff0099" }}
+                            thumbColor={darkMode ? "#222" : "#fff"}
+                            value={notificationsEnabled}
+                            onValueChange={setNotificationsEnabled}
+                        />
                     </View>
-
-                    {/* Dark Mode */}
-                    <View style={styles.settingRow}>
-                        <View style={styles.settingInfo}>
-                            <Ionicons name="moon-outline" size={22} color={darkMode ? "#fff" : "#ff0099"} />
-                            <Text style={[styles.settingText, darkMode && styles.darkText]}>Dark Mode</Text>
+                    <View style={styles.preferenceRow}>
+                        <View style={styles.preferenceInfo}>
+                            <Ionicons name="moon-outline" size={20} color={darkMode ? "#aaa" : "#ff0099"} />
+                            <Text style={[styles.preferenceText, darkMode && styles.darkPreferenceText]}>Dark Mode</Text>
                         </View>
-                        <Switch value={darkMode} onValueChange={setDarkMode} />
+                        <Switch
+                            trackColor={{ false: "#ccc", true: "#ff0099" }}
+                            thumbColor={darkMode ? "#222" : "#fff"}
+                            value={darkMode}
+                            onValueChange={setDarkMode}
+                        />
                     </View>
                 </View>
 
-                {/* Save Settings Button */}
-                <TouchableOpacity style={styles.saveButton} onPress={saveSettings}>
-                    <Ionicons name="save-outline" size={22} color="#fff" />
-                    <Text style={styles.saveButtonText}>Save Changes</Text>
+                {/* Action Buttons */}
+                <TouchableOpacity style={styles.buttonPrimary} onPress={saveSettings}>
+                    <Ionicons name="save-outline" size={20} color="#fff" />
+                    <Text style={styles.buttonPrimaryText}>Save Changes</Text>
                 </TouchableOpacity>
 
-                {/* Logout Button */}
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                    <Ionicons name="log-out-outline" size={22} color="#fff" />
-                    <Text style={styles.logoutText}>Logout</Text>
+                <TouchableOpacity style={styles.buttonSecondary} onPress={handleLogout}>
+                    <Ionicons name="log-out-outline" size={20} color="#ff0099" />
+                    <Text style={styles.buttonSecondaryText}>Logout</Text>
                 </TouchableOpacity>
-
             </ScrollView>
         </View>
     );
 }
 
-// Styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#f2f2f2",
         padding: 20,
-        backgroundColor: "#f5f5f5",
     },
     darkContainer: {
-        backgroundColor: "#222",
+        backgroundColor: "#1c1c1c",
+    },
+    scrollContent: {
+        paddingBottom: 30,
     },
     title: {
-        fontSize: 28,
+        fontSize: 32,
         fontWeight: "bold",
         textAlign: "center",
+        marginBottom: 30,
+        color: "#ff0099",
+    },
+    darkTitle: {
+        color: "#ff66c2",
+    },
+    card: {
+        backgroundColor: "#fff",
+        borderRadius: 15,
+        padding: 20,
         marginBottom: 20,
-        color: "#ff0099",
+        shadowColor: "#000",
+        shadowOpacity: 0.05,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 10,
+        elevation: 2,
     },
-    section: {
-        marginBottom: 25,
-        paddingHorizontal: 10,
+    darkCard: {
+        backgroundColor: "#2c2c2c",
     },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 10,
-        color: "#ff0099",
+    cardTitle: {
+        fontSize: 22,
+        fontWeight: "600",
+        marginBottom: 15,
+        color: "#333",
     },
-    input: {
-        height: 50,
-        borderColor: "#ccc",
-        borderWidth: 1,
+    darkCardTitle: {
+        color: "#ddd",
+    },
+    inputContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#f7f7f7",
         borderRadius: 10,
         paddingHorizontal: 15,
-        backgroundColor: "#fff",
+        paddingVertical: 10,
         marginBottom: 15,
+    },
+    input: {
+        flex: 1,
+        marginLeft: 10,
         fontSize: 16,
         color: "#333",
     },
     darkInput: {
-        backgroundColor: "#333",
+        backgroundColor: "#3a3a3a",
         color: "#fff",
-        borderColor: "#555",
     },
-    settingRow: {
+    preferenceRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#fff",
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
-        shadowColor: "#000",
-        shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 5,
-        elevation: 3,
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderColor: "#eee",
     },
-    settingInfo: {
+    preferenceInfo: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 10,
     },
-    settingText: {
+    preferenceText: {
         fontSize: 16,
-        fontWeight: "500",
+        marginLeft: 10,
         color: "#333",
     },
-    darkText: {
-        color: "#ddd",
+    darkPreferenceText: {
+        color: "#ccc",
     },
-    saveButton: {
+    buttonPrimary: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#28a745",
-        padding: 15,
-        borderRadius: 10,
-        marginTop: 20,
+        backgroundColor: "#ff0099",
+        paddingVertical: 15,
+        borderRadius: 15,
+        marginTop: 10,
     },
-    saveButtonText: {
+    buttonPrimaryText: {
         color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-        marginLeft: 8,
+        fontSize: 18,
+        fontWeight: "600",
+        marginLeft: 10,
     },
-    logoutButton: {
+    buttonSecondary: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#dc3545",
-        padding: 15,
-        borderRadius: 10,
-        marginTop: 20,
+        borderWidth: 1,
+        borderColor: "#ff0099",
+        paddingVertical: 15,
+        borderRadius: 15,
+        marginTop: 15,
     },
-    logoutText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-        marginLeft: 8,
+    buttonSecondaryText: {
+        color: "#ff0099",
+        fontSize: 18,
+        fontWeight: "600",
+        marginLeft: 10,
     },
 });
 

@@ -1,20 +1,53 @@
+// app/dashboard/_layout.tsx
 import React from "react";
+import { View, StyleSheet, Text } from "react-native";
 import { Drawer } from "expo-router/drawer";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
+import CustomDrawerContent from "../components/CustomDrawer"; // relative path
 
 export default function DashBoardLayout() {
     return (
         <Drawer
+            // Use our custom drawer content
+            drawerContent={(props) => <CustomDrawerContent {...props} />}
             screenOptions={{
                 drawerType: "slide",
-                drawerStyle: styles.drawerStyle,
+                // Transparent so gradient or background from custom drawer shows
+                drawerStyle: {
+                    width: 300,
+                    backgroundColor: "transparent",
+                },
+                // Active / Inactive colors changed to black
+                drawerActiveTintColor: "#000000",
+                drawerInactiveTintColor: "#000000",
+                // Active item background is slightly highlighted
+                drawerActiveBackgroundColor: "rgba(255, 0, 153, 0.2)",
+                // Header styling
                 headerStyle: styles.headerStyle,
-                drawerActiveTintColor: "#ff0099",
-                drawerInactiveTintColor: "#ffffff",
+                headerTitleAlign: "center",
+                headerTitle: () => (
+                    <Text style={styles.headerTitleText}>Aurum Knitting</Text>
+                ),
+                headerRight: () => (
+                    <View style={styles.headerRightContainer}>
+                        <Ionicons
+                            name="cart-outline"
+                            size={24}
+                            color="black"
+                            style={{ marginRight: 20 }}
+                        />
+                        <Ionicons name="person-outline" size={24} color="black" />
+                        <Ionicons
+                            name="call-outline"
+                            size={24}
+                            color="black"
+                            style={{ marginLeft: 16 }}
+                        />
+                    </View>
+                ),
             }}
         >
-            {/* ✅ Main Screens */}
+            {/* Drawer Screens */}
             <Drawer.Screen
                 name="main_page"
                 options={{
@@ -52,16 +85,15 @@ export default function DashBoardLayout() {
                 }}
             />
 
-            {/* ✅ Hidden Screen (Will not appear in Drawer) */}
+            {/* Hidden Screen */}
             <Drawer.Screen
                 name="_hidden/hidden2"
                 options={{
                     title: "Hidden",
-                    drawerItemStyle: { display: "none" }, // ✅ Hides the drawer item
+                    drawerItemStyle: { display: "none" },
                 }}
             />
 
-            {/* ✅ Settings at the Bottom */}
             <Drawer.Screen
                 name="settings"
                 options={{
@@ -75,16 +107,17 @@ export default function DashBoardLayout() {
     );
 }
 
-// ✅ Styles
+// Styles
 const styles = StyleSheet.create({
-    drawerStyle: {
-        width: 300,
-        backgroundColor: "#000000",
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
-        overflow: "hidden",
-    },
     headerStyle: {
         backgroundColor: "#ffffff",
+    },
+    headerTitleText: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    headerRightContainer: {
+        flexDirection: "row",
+        marginRight: 16,
     },
 });

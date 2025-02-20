@@ -1,41 +1,80 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    FlatList,
+    TouchableOpacity,
+    StyleSheet,
+    Alert,
+    Image,
+    ImageBackground,
+} from "react-native";
 
 export default function Customer() {
-    // State for customers list and input fields
+    // Initial customers include a local asset for profilePic.
     const [customers, setCustomers] = useState([
-        { id: "1", name: "John Doe", email: "john@example.com" },
-        { id: "2", name: "Jane Smith", email: "jane@example.com" },
+        {
+            id: "1",
+            name: "John Doe",
+            email: "john@example.com",
+            profilePic: require("../../assets/login_background/img_2.jpg"),
+        },
+        {
+            id: "2",
+            name: "Jane Smith",
+            email: "jane@example.com",
+            profilePic: require("../../assets/login_background/img_2.jpg"),
+        },
+        {
+            id: "3",
+            name: "Alice Brown",
+            email: "alice@example.com",
+            profilePic: require("../../assets/login_background/img_2.jpg"),
+        },
+        {
+            id: "4",
+            name: "Bob Johnson",
+            email: "bob@example.com",
+            profilePic: require("../../assets/login_background/img_2.jpg"),
+        },
     ]);
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
-    const [editingId, setEditingId] = useState(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
-    // Function to add a new customer
+    // Function to add a new customer.
+    // When adding a new customer, you can set a default profilePic.
+    const defaultProfilePic = require("../../assets/login_background/img_2.jpg");
+
     const addCustomer = () => {
         if (!name || !email) {
-            Alert.alert("Error", "Please enter name and email");
+            Alert.alert("Error", "Please enter both name and email");
             return;
         }
-        const newCustomer = { id: Date.now().toString(), name, email };
+        const newCustomer = {
+            id: Date.now().toString(),
+            name,
+            email,
+            profilePic: defaultProfilePic,
+        };
         setCustomers([...customers, newCustomer]);
         setName("");
         setEmail("");
     };
 
-    // Function to edit a customer
-    // @ts-ignore
-    const editCustomer = (customer) => {
+    // Function to edit a customer.
+    const editCustomer = (customer: { id: string; name: string; email: string; profilePic: any }) => {
         setName(customer.name);
         setEmail(customer.email);
         setEditingId(customer.id);
     };
 
-    // Function to update customer details
+    // Function to update customer details.
     const updateCustomer = () => {
         if (!name || !email) {
-            Alert.alert("Error", "Please enter name and email");
+            Alert.alert("Error", "Please enter both name and email");
             return;
         }
         setCustomers(
@@ -48,144 +87,197 @@ export default function Customer() {
         setEditingId(null);
     };
 
-    // Function to delete a customer
-    // @ts-ignore
-    const deleteCustomer = (id) => {
+    // Function to delete a customer.
+    const deleteCustomer = (id: string) => {
         setCustomers(customers.filter((customer) => customer.id !== id));
     };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Customer Management</Text>
-
-            {/* Input Fields */}
-            <TextInput
-                style={styles.input}
-                placeholder="Customer Name"
-                value={name}
-                onChangeText={setName}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Customer Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-            />
-
-            {/* Add or Update Button */}
-            {editingId ? (
-                <TouchableOpacity style={styles.updateButton} onPress={updateCustomer}>
-                    <Text style={styles.buttonText}>Update Customer</Text>
+    const renderCustomer = ({ item }: { item: { id: string; name: string; email: string; profilePic: any } }) => (
+        <View style={styles.card}>
+            <View style={styles.avatarContainer}>
+                <Image source={item.profilePic} style={styles.avatar} />
+            </View>
+            <View style={styles.infoContainer}>
+                <Text style={styles.cardName}>{item.name}</Text>
+                <Text style={styles.cardEmail}>{item.email}</Text>
+            </View>
+            <View style={styles.buttonRow}>
+                <TouchableOpacity style={styles.editBtn} onPress={() => editCustomer(item)}>
+                    <Text style={styles.btnText}>Edit</Text>
                 </TouchableOpacity>
-            ) : (
-                <TouchableOpacity style={styles.addButton} onPress={addCustomer}>
-                    <Text style={styles.buttonText}>Add Customer</Text>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => deleteCustomer(item.id)}>
+                    <Text style={[styles.btnText, styles.deleteBtnText]}>Delete</Text>
                 </TouchableOpacity>
-            )}
-
-            {/* Customer List */}
-            <FlatList
-                data={customers}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.customerItem}>
-                        <View>
-                            <Text style={styles.customerName}>{item.name}</Text>
-                            <Text style={styles.customerEmail}>{item.email}</Text>
-                        </View>
-                        <View style={styles.actionButtons}>
-                            <TouchableOpacity style={styles.editButton} onPress={() => editCustomer(item)}>
-                                <Text style={styles.buttonText}>Edit</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.deleteButton} onPress={() => deleteCustomer(item.id)}>
-                                <Text style={styles.buttonText}>Delete</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
-            />
+            </View>
         </View>
+    );
+
+    return (
+        <ImageBackground
+            source={require("../../assets/login_background/img_2.jpg")}
+            style={styles.background}
+            resizeMode="cover"
+        >
+            <View style={styles.overlay}>
+                <Text style={styles.header}>Customer Accounts</Text>
+
+                {/* Input Section */}
+                <View style={styles.inputSection}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter name"
+                        placeholderTextColor="#E89ACF"
+                        value={name}
+                        onChangeText={setName}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter email"
+                        placeholderTextColor="#E89ACF"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                    />
+                    {editingId ? (
+                        <TouchableOpacity style={styles.primaryButton} onPress={updateCustomer}>
+                            <Text style={styles.buttonLabel}>Update Customer</Text>
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity style={styles.primaryButton} onPress={addCustomer}>
+                            <Text style={styles.buttonLabel}>Add Customer</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
+                {/* Customer List */}
+                <FlatList
+                    data={customers}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderCustomer}
+                    contentContainerStyle={styles.listContainer}
+                    showsVerticalScrollIndicator={false}
+                />
+            </View>
+        </ImageBackground>
     );
 }
 
-// Styles for the UI
 const styles = StyleSheet.create({
-    container: {
+    background: {
         flex: 1,
-        padding: 20,
-        backgroundColor: "#f5f5f5",
     },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
+    // Semi-transparent overlay to enhance readability.
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(255,240,246,0.56)",
+        paddingHorizontal: 20,
+        paddingTop: 40,
+    },
+    header: {
+        fontSize: 26,
+        fontWeight: "700",
+        color: "#C2185B",
         textAlign: "center",
         marginBottom: 20,
     },
-    input: {
-        height: 50,
-        borderColor: "#ccc",
+    inputSection: {
+        backgroundColor: "#FFF",
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 20,
         borderWidth: 1,
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        backgroundColor: "#fff",
-        marginBottom: 15,
-        fontSize: 16,
-    },
-    addButton: {
-        backgroundColor: "#007bff",
-        padding: 15,
-        borderRadius: 10,
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    updateButton: {
-        backgroundColor: "#28a745",
-        padding: 15,
-        borderRadius: 10,
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    buttonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
-    customerItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#fff",
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
-        shadowColor: "#000",
+        borderColor: "#FFC1E3",
+        shadowColor: "#C2185B",
         shadowOpacity: 0.1,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 5,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 8,
+        elevation: 2,
     },
-    customerName: {
-        fontSize: 18,
-        fontWeight: "bold",
+    input: {
+        height: 45,
+        borderWidth: 1,
+        borderColor: "#FFC1E3",
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        marginBottom: 12,
+        fontSize: 15,
+        color: "#333",
+        backgroundColor: "#FFF",
     },
-    customerEmail: {
+    primaryButton: {
+        backgroundColor: "#FF4081",
+        borderRadius: 8,
+        paddingVertical: 12,
+        alignItems: "center",
+    },
+    buttonLabel: {
+        color: "#FFF",
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    listContainer: {
+        paddingBottom: 40,
+    },
+    card: {
+        backgroundColor: "#FFF",
+        borderRadius: 12,
+        marginBottom: 16,
+        padding: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        borderWidth: 1,
+        borderColor: "#FFB6C1",
+        shadowColor: "#FF4081",
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 6,
+        elevation: 2,
+    },
+    avatarContainer: {
+        marginRight: 12,
+    },
+    avatar: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+    },
+    infoContainer: {
+        flex: 1,
+    },
+    cardName: {
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#333",
+        marginBottom: 4,
+    },
+    cardEmail: {
         fontSize: 14,
         color: "#666",
     },
-    actionButtons: {
-        flexDirection: "row",
+    buttonRow: {
+        flexDirection: "column",
+        justifyContent: "space-between",
     },
-    editButton: {
-        backgroundColor: "#ffc107",
-        padding: 10,
-        borderRadius: 5,
-        marginRight: 5,
+    editBtn: {
+        backgroundColor: "#FFE0F0",
+        borderRadius: 6,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        marginBottom: 8,
     },
-    deleteButton: {
-        backgroundColor: "#dc3545",
-        padding: 10,
-        borderRadius: 5,
+    deleteBtn: {
+        backgroundColor: "#FF4081",
+        borderRadius: 6,
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+    },
+    btnText: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#333",
+    },
+    deleteBtnText: {
+        color: "#FFF",
     },
 });
 
