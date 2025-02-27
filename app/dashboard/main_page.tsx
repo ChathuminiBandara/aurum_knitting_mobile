@@ -9,6 +9,7 @@ import {
     FlatList,
     TextInput,
     Dimensions,
+    ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -16,12 +17,18 @@ import { useRouter } from "expo-router";
 // Screen width for the banner carousel
 const { width } = Dimensions.get("window");
 
-// Sample Data
-const bannerData = [
-    { id: "1", image: require("../../assets/login_background/img_2.jpg") },
-    { id: "2", image: require("../../assets/login_background/img_2.jpg") },
-    { id: "3", image: require("../../assets/login_background/img_2.jpg") },
-];
+// Type definitions for our data
+interface Product {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+    quantity: number;
+    categoryId: number;
+    createdAt: string;
+    updatedAt: string;
+}
 
 const categories = [
     { id: "1", title: "New", icon: "flash-outline" },
@@ -31,171 +38,43 @@ const categories = [
     { id: "5", title: "More", icon: "ellipsis-horizontal" },
 ];
 
-const flashSaleProducts = [
-    {
-        id: "flash1",
-        title: "Bouquet Rose 1",
-        oldPrice: "4000 ₽",
-        newPrice: "2999 ₽",
-        rating: 4.8,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "flash2",
-        title: "Bouquet Rose 2",
-        oldPrice: "3500 ₽",
-        newPrice: "2499 ₽",
-        rating: 4.3,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "flash3",
-        title: "Bouquet Rose 3",
-        oldPrice: "3500 ₽",
-        newPrice: "2499 ₽",
-        rating: 4.3,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "flash4",
-        title: "Bouquet Rose 4",
-        oldPrice: "3500 ₽",
-        newPrice: "2499 ₽",
-        rating: 4.3,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "flash5",
-        title: "Bouquet Rose 5",
-        oldPrice: "3500 ₽",
-        newPrice: "2499 ₽",
-        rating: 4.3,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "flash6",
-        title: "Bouquet Rose 6",
-        oldPrice: "3500 ₽",
-        newPrice: "2499 ₽",
-        rating: 4.3,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    // Add more items...
-];
-
-const featuredProducts = [
-    {
-        id: "f1",
-        title: "Bouquet of Light Peach Bush Roses Pavlova",
-        subtitle: "Puff tulip",
-        oldPrice: "4890 ₽",
-        newPrice: "4290 ₽",
-        rating: 4.5,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "f2",
-        title: "Luxurious Lavender Bouquet With Roses",
-        subtitle: "Purple Dream",
-        oldPrice: "2590 ₽",
-        newPrice: "1990 ₽",
-        rating: 4.7,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "f3",
-        title: "Luxurious Lavender Bouquet",
-        subtitle: "Purple Dream",
-        oldPrice: "2590 ₽",
-        newPrice: "1990 ₽",
-        rating: 4.7,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "f4",
-        title: "Luxurious Lavender Bouquet",
-        subtitle: "Purple Dream",
-        oldPrice: "2590 ₽",
-        newPrice: "1990 ₽",
-        rating: 4.7,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "f5",
-        title: "Luxurious Lavender Bouquet",
-        subtitle: "Purple Dream",
-        oldPrice: "2590 ₽",
-        newPrice: "1990 ₽",
-        rating: 4.7,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },    {
-        id: "f6",
-        title: "Luxurious Lavender Bouquet",
-        subtitle: "Purple Dream",
-        oldPrice: "2590 ₽",
-        newPrice: "1990 ₽",
-        rating: 4.7,
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-
-    // Add more items...
-];
-
-const recommendedItems = [
-    {
-        id: "r1",
-        title: "Romantic Red Roses",
-        price: "1590 ₽",
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "r2",
-        title: "Sunflower Sunshine",
-        price: "990 ₽",
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "r3",
-        title: "Sunflower Sunshine",
-        price: "990 ₽",
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "r4",
-        title: "Sunflower Sunshine",
-        price: "990 ₽",
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    {
-        id: "r5",
-        title: "Sunflower Sunshine",
-        price: "990 ₽",
-        image: require("../../assets/login_background/img_2.jpg"),
-    },
-    // Add more items...
-];
-
 export default function MainPage() {
     const router = useRouter();
-
-    // Tell TypeScript what this ref points to:
     const bannerRef = useRef<FlatList<any> | null>(null);
-
     const [bannerIndex, setBannerIndex] = useState(0);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-/*    // Carousel States
-    const [bannerIndex, setBannerIndex] = useState(0);
-    const bannerRef = useRef(null);*/
+    // Fetch products from API
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
-    // Auto-scroll banners every 3 seconds
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/products');
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+            const data = await response.json();
+            setProducts(data);
+            setLoading(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred');
+            setLoading(false);
+        }
+    };
+
+    // Auto-scroll banners
     useEffect(() => {
         const interval = setInterval(() => {
             setBannerIndex((prevIndex) =>
-                prevIndex === bannerData.length - 1 ? 0 : prevIndex + 1
+                prevIndex === products.slice(0, 3).length - 1 ? 0 : prevIndex + 1
             );
         }, 3000);
         return () => clearInterval(interval);
-    }, []);
+    }, [products]);
 
     useEffect(() => {
         if (bannerRef.current) {
@@ -206,9 +85,28 @@ export default function MainPage() {
         }
     }, [bannerIndex]);
 
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#ff4081" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+                <TouchableOpacity style={styles.retryButton} onPress={fetchProducts}>
+                    <Text style={styles.retryButtonText}>Retry</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     // Render Category
     // @ts-ignore
-    const renderCategory = ({ item }) => (
+    const renderCategory = ({ item }: { item: typeof categories[0] }) => (
         <TouchableOpacity style={styles.categoryItem}>
             <Ionicons name={item.icon} size={24} color="#ff4081" />
             <Text style={styles.categoryText}>{item.title}</Text>
@@ -216,41 +114,39 @@ export default function MainPage() {
     );
 
     // Render Flash Sale Item
-    // @ts-ignore
-    const renderFlashSaleItem = ({ item }) => (
+    const renderFlashSaleItem = ({ item }: { item: Product }) => (
         <View style={styles.flashItem}>
-            <Image source={item.image} style={styles.flashImage} />
+            <Image source={{ uri: item.imageUrl }} style={styles.flashImage} />
             <Text style={styles.flashTitle} numberOfLines={1}>
-                {item.title}
+                {item.name}
             </Text>
             <View style={styles.flashPriceRow}>
-                <Text style={styles.flashOldPrice}>{item.oldPrice}</Text>
-                <Text style={styles.flashNewPrice}>{item.newPrice}</Text>
+                <Text style={styles.flashNewPrice}>${item.price}</Text>
             </View>
             <View style={styles.flashRatingRow}>
                 <Ionicons name="star" size={16} color="#FFD700" />
-                <Text style={styles.flashRating}>{item.rating}</Text>
+                <Text style={styles.flashRating}>4.5</Text>
             </View>
         </View>
     );
 
     // Render Featured Product
-    // @ts-ignore
-    const renderFeaturedProduct = ({ item }) => (
+    const renderFeaturedProduct = ({ item }: { item: Product }) => (
         <View style={styles.productCard}>
-            <Image source={item.image} style={styles.productImage} />
+            <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
             <View style={styles.productInfo}>
                 <Text style={styles.productTitle} numberOfLines={2}>
-                    {item.title}
+                    {item.name}
                 </Text>
-                <Text style={styles.productSubtitle}>{item.subtitle}</Text>
+                <Text style={styles.productSubtitle} numberOfLines={2}>
+                    {item.description}
+                </Text>
                 <View style={styles.priceRow}>
-                    <Text style={styles.oldPrice}>{item.oldPrice}</Text>
-                    <Text style={styles.newPrice}>{item.newPrice}</Text>
+                    <Text style={styles.newPrice}>${item.price}</Text>
                 </View>
                 <View style={styles.ratingRow}>
                     <Ionicons name="star" size={16} color="#FFD700" />
-                    <Text style={styles.rating}>{item.rating}</Text>
+                    <Text style={styles.rating}>4.5</Text>
                 </View>
                 <TouchableOpacity style={styles.buyButton}>
                     <Text style={styles.buyButtonText}>Buy</Text>
@@ -259,15 +155,14 @@ export default function MainPage() {
         </View>
     );
 
-    // Render Recommended Item (horizontal scroll)
-    // @ts-ignore
-    const renderRecommendedItem = ({ item }) => (
+    // Render Recommended Item
+    const renderRecommendedItem = ({ item }: { item: Product }) => (
         <View style={styles.recommendedCard}>
-            <Image source={item.image} style={styles.recommendedImage} />
+            <Image source={{ uri: item.imageUrl }} style={styles.recommendedImage} />
             <Text style={styles.recommendedTitle} numberOfLines={2}>
-                {item.title}
+                {item.name}
             </Text>
-            <Text style={styles.recommendedPrice}>{item.price}</Text>
+            <Text style={styles.recommendedPrice}>${item.price}</Text>
         </View>
     );
 
@@ -286,19 +181,19 @@ export default function MainPage() {
             <View style={styles.bannerContainer}>
                 <FlatList
                     ref={bannerRef}
-                    data={bannerData}
+                    data={products.slice(0, 3)}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     pagingEnabled
-                    scrollEnabled={false} // We manage scrolling ourselves
-                    keyExtractor={(item) => item.id}
+                    scrollEnabled={false}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
-                        <Image source={item.image} style={styles.bannerImage} />
+                        <Image source={{ uri: item.imageUrl }} style={styles.bannerImage} />
                     )}
                 />
                 {/* Dots Indicator */}
                 <View style={styles.dotsContainer}>
-                    {bannerData.map((_, i) => (
+                    {products.slice(0, 3).map((_, i) => (
                         <View
                             key={i}
                             style={[
@@ -312,15 +207,12 @@ export default function MainPage() {
 
             {/* Categories Section */}
             <View style={styles.categoriesSection}>
-                {/* Section Header */}
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>Categories</Text>
-                    <TouchableOpacity onPress={() => { /* navigate or show all categories */ }}>
+                    <TouchableOpacity>
                         <Text style={styles.seeAll}>See All</Text>
                     </TouchableOpacity>
                 </View>
-
-                {/* Categories List */}
                 <View style={styles.categoryContainer}>
                     <FlatList
                         data={categories}
@@ -333,56 +225,55 @@ export default function MainPage() {
                 </View>
             </View>
 
-
             {/* Flash Sale */}
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>Flash Sale</Text>
-                    <TouchableOpacity onPress={() => { /* navigate to see all */ }}>
+                    <TouchableOpacity>
                         <Text style={styles.seeAll}>See All</Text>
                     </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={flashSaleProducts}
+                    data={products.slice(0, 6)}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={renderFlashSaleItem}
                     contentContainerStyle={{ paddingHorizontal: 10 }}
                 />
             </View>
 
-            {/* Featured Products (Grid) */}
+            {/* Featured Products */}
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>Featured Products</Text>
-                    <TouchableOpacity onPress={() => { /* navigate to see all */ }}>
+                    <TouchableOpacity>
                         <Text style={styles.seeAll}>See All</Text>
                     </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={featuredProducts}
+                    data={products.slice(0, 6)}
                     numColumns={2}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={renderFeaturedProduct}
                     columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: 10 }}
                     contentContainerStyle={{ paddingBottom: 10 }}
                 />
             </View>
 
-            {/* Recommended (Horizontal Scroll) */}
+            {/* Recommended */}
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>Recommended for You</Text>
-                    <TouchableOpacity onPress={() => { /* navigate to see all */ }}>
+                    <TouchableOpacity>
                         <Text style={styles.seeAll}>See All</Text>
                     </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={recommendedItems}
+                    data={products.slice(0, 5)}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={renderRecommendedItem}
                     contentContainerStyle={{ paddingHorizontal: 10 }}
                 />
@@ -391,13 +282,38 @@ export default function MainPage() {
     );
 }
 
-// Styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fafafa",
     },
-    // Search Bar
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    errorText: {
+        fontSize: 16,
+        color: '#ff4081',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    retryButton: {
+        backgroundColor: '#ff4081',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 5,
+    },
+    retryButtonText: {
+        color: '#fff',
+        fontSize: 16,
+    },
     searchContainer: {
         flexDirection: "row",
         backgroundColor: "#fff",
@@ -415,15 +331,13 @@ const styles = StyleSheet.create({
         height: 40,
         fontSize: 14,
     },
-
-    // Banner Carousel
     bannerContainer: {
         width: "100%",
         height: 200,
         position: "relative",
     },
     bannerImage: {
-        width: width,
+        width,
         height: "100%",
         resizeMode: "cover",
     },
@@ -441,13 +355,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#ccc",
         marginHorizontal: 4,
     },
-
-    // General Section
     section: {
-        marginTop: 14,  // increased from 15
-        marginBottom: 15,
-        marginVertical: 25, // instead of separate marginTop, marginBottom
-
+        marginVertical: 25,
     },
     sectionHeader: {
         flexDirection: "row",
@@ -464,8 +373,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#ff4081",
     },
-
-    // Categories
     categoryItem: {
         alignItems: "center",
         justifyContent: "center",
@@ -484,8 +391,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: "#333",
     },
-
-    // Flash Sale
     flashItem: {
         backgroundColor: "#fff",
         width: 140,
@@ -496,7 +401,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 3,
         elevation: 2,
-        marginBottom: 5
+        marginBottom: 5,
     },
     flashImage: {
         width: "100%",
@@ -514,12 +419,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginVertical: 4,
     },
-    flashOldPrice: {
-        fontSize: 12,
-        color: "#888",
-        textDecorationLine: "line-through",
-        marginRight: 6,
-    },
     flashNewPrice: {
         fontSize: 14,
         color: "#d32f2f",
@@ -533,12 +432,10 @@ const styles = StyleSheet.create({
         marginLeft: 3,
         fontSize: 12,
     },
-
-    // Featured Products
     productCard: {
         backgroundColor: "#fff",
         borderRadius: 10,
-        width: (width / 2) - 20, // 2 columns
+        width: (width / 2) - 20,
         marginBottom: 15,
         overflow: "hidden",
         marginHorizontal: 5,
@@ -570,12 +467,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginVertical: 5,
     },
-    oldPrice: {
-        textDecorationLine: "line-through",
-        fontSize: 12,
-        color: "#888",
-        marginRight: 5,
-    },
     newPrice: {
         fontSize: 14,
         fontWeight: "bold",
@@ -601,8 +492,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
     },
-
-    // Recommended
     recommendedCard: {
         backgroundColor: "#fff",
         width: 120,
@@ -630,27 +519,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#d32f2f",
     },
-
-
-
-
-    // ---------------------
     categoriesSection: {
         marginTop: 15,
-        // Optional if you want some background or border
         backgroundColor: "#fff",
         borderRadius: 10,
         marginHorizontal: 10,
         paddingVertical: 10,
-        // Shadow for iOS/Android
         shadowOpacity: 0.05,
         shadowRadius: 3,
     },
-
-
     categoryContainer: {
-        // If you want extra padding around the categories
         paddingBottom: 10,
     },
-
 });

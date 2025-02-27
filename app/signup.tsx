@@ -1,17 +1,29 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Animated } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    ImageBackground,
+    Animated,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function Index() {
+export default function Signup() {
     const router = useRouter();
+
+    // Form states
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     // Animations
     const fadeAnim = useRef(new Animated.Value(0)).current;
-    const slideAnim = useRef(new Animated.Value(50)).current; // Corrected
+    const slideAnim = useRef(new Animated.Value(50)).current;
 
     useEffect(() => {
         Animated.parallel([
@@ -28,13 +40,24 @@ export default function Index() {
         ]).start();
     }, []);
 
-    function handleLogin() {
-        if (username === "1" && password === "1") {
-            router.push("/dashboard");
-        } else {
-            alert("Invalid username or password!");
+    // Example sign-up logic
+    const handleSignUp = () => {
+        // Basic validation example
+        if (!email || !username || !password || !confirmPassword) {
+            alert("Please fill out all fields!");
+            return;
         }
-    }
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        // TODO: Add your sign-up logic/API call here
+        // For now, just navigate to dashboard on success
+        alert("Account created successfully!");
+        router.push("/dashboard");
+    };
 
     return (
         <ImageBackground
@@ -52,14 +75,24 @@ export default function Index() {
                             styles.brandTitle,
                             {
                                 opacity: fadeAnim,
-                                transform: [{ translateY: slideAnim }] // ✅ Fixed translateY
-                            }
+                                transform: [{ translateY: slideAnim }],
+                            },
                         ]}
                     >
                         Aurum Knitting
                     </Animated.Text>
 
-                    <Text style={styles.title}>Welcome Back!</Text>
+                    <Text style={styles.title}>Create Your Account</Text>
+
+                    {/* Email Input */}
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        placeholderTextColor="rgba(255,0,153,0.4)"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                    />
 
                     {/* Username Input */}
                     <TextInput
@@ -80,14 +113,24 @@ export default function Index() {
                         onChangeText={setPassword}
                     />
 
-                    {/* Login Button */}
-                    <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                        <Text style={styles.buttonText}>Login</Text>
+                    {/* Confirm Password Input */}
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Confirm Password"
+                        placeholderTextColor="rgba(255,0,153,0.4)"
+                        secureTextEntry
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                    />
+
+                    {/* Sign Up Button */}
+                    <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+                        <Text style={styles.buttonText}>Sign Up</Text>
                     </TouchableOpacity>
                 </BlurView>
 
-                {/* Social Media Login */}
-                <Text style={styles.orText}>Or continue with</Text>
+                {/* Social Media Sign Up */}
+                <Text style={styles.orText}>Or sign up with</Text>
                 <View style={styles.socialContainer}>
                     <TouchableOpacity style={styles.socialButton}>
                         <Ionicons name="logo-google" size={24} color="white" />
@@ -101,15 +144,17 @@ export default function Index() {
                     <TouchableOpacity style={styles.socialButton}>
                         <Ionicons name="logo-instagram" size={24} color="white" />
                     </TouchableOpacity>
-                </View>View/
+                </View>
 
-                {/* Sign Up Option */}
+                {/* Already have an account? */}
                 <Text style={styles.signUpText}>
-                    Don't have an account?{" "}
-                    <Text style={styles.signUpLink} onPress={() => router.push("/signup")}>
-                        Sign Up
+                    Already have an account?{" "}
+                    <Text
+                        style={styles.signUpLink}
+                        onPress={() => router.push("/")}
+                    >
+                        Login
                     </Text>
-
                 </Text>
             </View>
         </ImageBackground>
@@ -126,7 +171,7 @@ const styles = StyleSheet.create({
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(255,0,153,0.1)", // Adjust the opacity here (0.1 = 10% opacity)
+        backgroundColor: "rgba(255,0,153,0.1)",
     },
     brandTitle: {
         fontSize: 30,
@@ -143,7 +188,7 @@ const styles = StyleSheet.create({
     },
     card: {
         width: "85%",
-        minHeight: 300,
+        minHeight: 400,
         paddingVertical: 40,
         paddingHorizontal: 30,
         borderRadius: 20,
@@ -157,7 +202,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "500",
         color: "#ff0099",
-        marginBottom: 35,
+        marginBottom: 25,
         letterSpacing: 1,
     },
     input: {
@@ -166,7 +211,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "rgba(255, 255, 255, 0.4)",
         borderRadius: 25,
-        paddingHorizontal: 20, // ✅ Fixed padding for text visibility
+        paddingHorizontal: 20,
         backgroundColor: "rgba(255,0,153,0.3)",
         marginBottom: 15,
         fontSize: 16,
